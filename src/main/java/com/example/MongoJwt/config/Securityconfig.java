@@ -32,15 +32,17 @@ public class Securityconfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Autowired
+    private Jwtauthenticationentypoint jwtauthenticationentypoint;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().and().csrf().disable().formLogin();
         ;
         http.authorizeRequests().antMatchers("/generatetoken")
-                .permitAll().anyRequest().authenticated().and().exceptionHandling();
+                .permitAll().anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(jwtauthenticationentypoint);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtrequestfilter, UsernamePasswordAuthenticationFilter.class);
-
 
 
     }

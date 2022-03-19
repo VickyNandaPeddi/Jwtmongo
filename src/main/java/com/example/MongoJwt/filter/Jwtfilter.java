@@ -38,20 +38,29 @@ public class Jwtfilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
             logger.error("username from token" + token);
-//            userName = jwtutil.extractUsername(token);
+
+            try {
+                userName = jwtutil.extractUsername(token);
+                logger.error("Username from token :" + userName);
+            } catch (Exception e) {
+                System.out.println("unable to  get token   :" + e.getMessage());
+            }
 
         }
+
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = customUserdetailsservice.loadUserByUsername(userName);
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            Boolean validateToken = jwtutil.validateToken(token, userDetails);
-            if (validateToken) {
+            if (jwtutil.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                usernamePasswordAuthenticationToken
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
             }
         }
         filterChain.doFilter(request, response);

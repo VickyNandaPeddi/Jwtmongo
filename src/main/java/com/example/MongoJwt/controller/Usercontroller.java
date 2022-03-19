@@ -7,13 +7,14 @@ import com.example.MongoJwt.service.CustomUserdetailsservice;
 import com.example.MongoJwt.util.Jwtutil;
 import com.example.MongoJwt.util.Techieutils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/user")
@@ -58,26 +59,26 @@ public class Usercontroller {
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public User getalluser(@PathVariable String id) {
         return userdao.findById(id).get();
     }
 
     @GetMapping("/admin")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String getalluser() {
         return "this is only for admin";
     }
 
     @GetMapping("/")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public User findbyusername() {
         return userdao.findByUsername("nanda");
     }
 
     @PostMapping("/principal")
-    public Object getprincipal(GrantedAuthority principal) {
-        Object details = principal.getAuthority();
+    public Object getprincipal(Principal principal) {
+        Object details = principal.getName();
         System.out.println(details);
 
         return details;

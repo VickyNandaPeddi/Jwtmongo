@@ -28,6 +28,6 @@ public class CustomUserdetailsservice implements UserDetailsService {
         if (byUsername == null) {
             System.out.println("username not found");
         }
-        return new org.springframework.security.core.userdetails.User(byUsername.getUsername(), byUsername.getPassword(), List.of(new SimpleGrantedAuthority(byUsername.getRoles())));
+        return new org.springframework.security.core.userdetails.User(byUsername.getUsername(), byUsername.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_" + byUsername.getRoles().toUpperCase())));
     }
 }
